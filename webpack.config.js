@@ -5,7 +5,7 @@ var node_modules_dir = path.resolve(__dirname, 'node_modules');
 
 module.exports = {
   entry: path.resolve(__dirname, 'app/app.js'),
-  
+
   output: {
     path: path.resolve(__dirname, 'public'),
     filename: 'build.js'
@@ -21,8 +21,8 @@ module.exports = {
 
   plugins: [
     new ExtractTextPlugin("styles.css"),
-    new webpack.optimize.UglifyJsPlugin(),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin()
+    // new webpack.optimize.UglifyJsPlugin(),
+    // new webpack.optimize.DedupePlugin(),
+    // new webpack.optimize.OccurenceOrderPlugin()
   ]
 };

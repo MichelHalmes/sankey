@@ -1,13 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import Modal from 'react-modal';
 import request from 'superagent';
 
-import {loadData} from './__old/utils.js'
-
+import {loadData, parseLevelData} from './utils.js'
 
 import SankeyChart from './SankeyChart';
-
 
 import bootstrap from 'bootstrap/dist/css/bootstrap.css';
 import style from './sankey.css';
@@ -21,31 +18,30 @@ class App extends React.Component {
       nodes: [],
       links: [],
       split_level_1: null
-
     };
 
-    // this.loadLevelData = loadLevelData.bind(this);
     this.loadData = loadData.bind(this);
+
+    this.loadLevelData = this.loadLevelData.bind(this);
   }
 
   componentDidMount() {
     this.loadData('./emptyData.json');
-    // this.loadLevelData('./levelData.json');
+    this.loadLevelData('./levelData.json');
   }
 
   loadLevelData(path) {
     request
       .get(path)
       .end((err, res) => {
-        if (err) { console.log(err); }
+        if (err) { console.log('Data import error!', err); }
 
         var level_links = res.body.links;
         var level_nodes = res.body.nodes;
 
-
-        level_nodes.forEach((node, i) => {
-
-        })
+        var {nodes, links} = parseLevelData(level_nodes, level_links, this.state.split_level_1);
+        console.log(nodes);
+        console.log(links);
 
         this.setState({nodes, links});
       });
