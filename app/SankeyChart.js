@@ -72,7 +72,7 @@ export default class extends React.Component {
       .data(graph.links)
       .enter().append("path")
       .attr("class", "link")
-      .on('click', this.props.openModal) // register eventListener
+      // .on('click', this.props.openModal) // register eventListener
       .attr("d", path)
       .style("stroke-width", (d) => Math.max(1, d.dy))
 
@@ -87,13 +87,14 @@ export default class extends React.Component {
       .data(graph.nodes)
       .enter().append("g")
       .attr("class", "node")
-      .on('click', this.props.openModal) // register eventListener
+      .on('click', this.props.onNodeClick) // register eventListener
       .attr("transform", (d) => "translate(" + d.x + "," + d.y + ")")
 
     // add nodes rect
     node.append("rect")
       .attr("height", (d) => d.dy)
       .attr("width", sankey.nodeWidth())
+      .attr("class", (d) => d.is_split? "is_split" : "not_split")
       .append("title")
       .text((d) => d.name + "\n" + format(d.value));
 

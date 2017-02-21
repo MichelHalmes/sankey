@@ -2,13 +2,26 @@ body {
   font-family: Helvetica;
 }
 
+#app {
+  margin-bottom: 35px;
+}
+
+.container {
+  max-width: 1200px;
+  margin-top: 35px;
+}
+
+.node {
+  fill-opacity: .7;
+}
+
 .node rect {
   fill: #888888;
   shape-rendering: crispEdges;
 }
 
-.node {
-  fill-opacity: .7;
+.node rect.is_split{
+  fill: #111188;
 }
 
 .node:hover {
@@ -33,7 +46,7 @@ body {
   cursor: pointer;
 }
 
-.ReactModal__Overlay {
+/*.ReactModal__Overlay {
   -webkit-perspective: 600;
   perspective: 600;
   opacity: 0;
@@ -60,11 +73,6 @@ body {
 .ReactModal__Content--before-close {
   -webkit-transform: scale(0.5) rotateX(30deg);
   transition: all 150ms ease-in;
-}
-
-.container {
-  max-width: 1200px;
-  margin-top: 35px;
 }
 
 .header h3 {
@@ -124,10 +132,6 @@ a:hover {
   color: #4CA1E7;
 }
 
-#app {
-  margin-bottom: 35px;
-}
-
 .clearFix {
   clear: both;
 }
@@ -151,4 +155,4 @@ a:hover {
   padding-bottom: 10px;
   border-radius: 5px;
   color: #666;
-}
+}*/

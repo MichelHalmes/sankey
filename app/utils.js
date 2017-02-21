@@ -20,8 +20,19 @@ function loadData(path) {
 
 
 function parseLevelData(level_nodes, level_links, split_level_1){
+  var node_map = parseLevelNodes(level_nodes, split_level_1);
 
-  "Parse nodes"
+  var nodes = Array.from(node_map.values())
+    .filter((thing, index, self) => index === self.findIndex((t) => {
+      return t.node === thing.node && t.name === thing.name; })
+    );
+
+  var links = parseLevelLinks(level_links, node_map);
+
+  return {nodes, links}
+}
+
+function parseLevelNodes(level_nodes, split_level_1) {
   var node_map = new Map();
   var node_count = -1;
   var prev_level_1 = null;
@@ -29,7 +40,7 @@ function parseLevelData(level_nodes, level_links, split_level_1){
   level_nodes.forEach(function(node) {
     if(node.level_1 == split_level_1) {
       node_count++;
-      node_map.set(node.level_0, {node: node_count, name: node.level_0});
+      node_map.set(node.level_0, {node: node_count, name: node.level_0, is_split: true});
     } else {
       if (node.level_1 != prev_level_1) {
         node_count++;
@@ -39,12 +50,10 @@ function parseLevelData(level_nodes, level_links, split_level_1){
     }
   });
 
-  var nodes = Array.from(node_map.values())
-    .filter((thing, index, self) => index === self.findIndex((t) => {
-      return t.node === thing.node && t.name === thing.name; })
-    );
+  return node_map;
+}
 
-  // Parse links
+function parseLevelLinks(level_links, node_map) {
   level_links = level_links.map(function(link) {
     var source = node_map.get(link.source_0);
     var target = node_map.get(link.target_0);
@@ -67,7 +76,8 @@ function parseLevelData(level_nodes, level_links, split_level_1){
     return acc;
   }, []);
 
-  return {nodes, links}
+  return links;
+
 }
 
 export { loadData, parseLevelData }
