@@ -10,7 +10,7 @@ export default class extends React.Component {
     super()
 
     this.state = {
-      nodes: [], 
+      nodes: [],
       links: []
     };
   }
@@ -58,7 +58,7 @@ export default class extends React.Component {
     // Initialize and append the svg canvas to faux-DOM
     // ========================================================================
     var svgNode = ReactFauxDOM.createElement('div');
-    
+
     var svg = d3.select(svgNode).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -108,7 +108,7 @@ export default class extends React.Component {
       .attr("x", 6 + sankey.nodeWidth())
       .attr("text-anchor", "start");
 
-    // Above D3 manipaluation equal to following jsx if didn't rely on faux-dom 
+    // Above D3 manipaluation equal to following jsx if didn't rely on faux-dom
     // ------------------------------------------------------------------------
     // var links = graph.links.map((link, i) => {
     //   return (
@@ -126,7 +126,7 @@ export default class extends React.Component {
     //       <rect height={node.dy} width={sankey.nodeWidth()}>
     //         <title>{node.name + "\n" + format(node.value)}</title>
     //       </rect>
-    //       { (node.x >= width / 2) ? 
+    //       { (node.x >= width / 2) ?
     //         <text x={-6} y={node.dy / 2} dy={".35em"} textAnchor={"end"} >{node.name}</text> :
     //         <text x={6 + sankey.nodeWidth()} y={node.dy / 2} dy={".35em"} textAnchor={"start"} >{node.name}</text>
     //       }
