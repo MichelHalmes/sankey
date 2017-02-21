@@ -4,8 +4,8 @@
   "description": "A D3/Faux-dom/React Sankey Diagram Builder App",
   "main": "app.js",
   "scripts": {
-    "dev-server": "webpack-dev-server",
-    "dev": "webpack --watch"
+    "dev-server": "webpack-dev-server --progress --colors",
+    "dev": "webpack --progress --colors --watch"
   },
   "author": "Nick Balestra",
   "license": "MIT",

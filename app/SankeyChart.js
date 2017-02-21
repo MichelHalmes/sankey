@@ -18,7 +18,7 @@ export default class extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      nodes: nextProps.nodes,
+      nodes: nextProps.nodes, // TODO: Why not use props?
       links: nextProps.links
     });
   }
@@ -29,8 +29,8 @@ export default class extends React.Component {
     // Set units, margin, sizes
     // ========================================================================
     var margin = { top: 10, right: 0, bottom: 10, left: 0 };
-    var width = 690 - margin.left - margin.right;
-    var height = 400 - margin.top - margin.bottom;
+    var width = 1100 - margin.left - margin.right;
+    var height = 700 - margin.top - margin.bottom;
 
     var format = (d) => formatNumber(d);
     var formatNumber = d3.format(",.0f"); // zero decimal places
