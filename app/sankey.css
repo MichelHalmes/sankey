@@ -3,25 +3,26 @@ body {
 }
 
 #app {
-  margin-bottom: 35px;
+  margin: 0px 0px 0px 0px;
 }
 
 .container {
-  max-width: 1200px;
-  margin-top: 35px;
+  max-width: 1600px;
+  margin: 0px 0px 0px 0px;
 }
 
 .node {
   fill-opacity: .7;
+  color:yellow !important;
 }
 
 .node rect {
-  fill: #888888;
+  fill: #111;
   shape-rendering: crispEdges;
 }
 
 .node rect.is_split{
-  fill: #111188;
+  fill: #118;
 }
 
 .node:hover {
@@ -30,129 +31,29 @@ body {
 }
 
 .node text {
-  fill: #888888;
+  fill: #444;
   stroke: none;
   font-size: .8em;
 }
 
 .link {
-  stroke: #cccccc;
-  stroke-opacity: .4;
   fill: none;
+  stroke: #000;
+  stroke-opacity: .2;
+}
+
+.cycleLink {
+  fill: #633;
+  opacity: .2;
+  stroke: none;
+  stroke-linejoin: "round";
+}
+
+.cycleLink:hover {
+  opacity: .5;
+  fill: #363;
 }
 
 .link:hover {
-  stroke-opacity: .6;
-  cursor: pointer;
+  stroke-opacity: .5;
 }
-
-/*.ReactModal__Overlay {
-  -webkit-perspective: 600;
-  perspective: 600;
-  opacity: 0;
-}
-
-.ReactModal__Overlay--after-open {
-  opacity: 1;
-  transition: opacity 150ms ease-out;
-}
-
-.ReactModal__Content {
-  -webkit-transform: scale(0.5) rotateX(-30deg);
-}
-
-.ReactModal__Content--after-open {
-  -webkit-transform: scale(1) rotateX(0deg);
-  transition: all 150ms ease-in;
-}
-
-.ReactModal__Overlay--before-close {
-  opacity: 0;
-}
-
-.ReactModal__Content--before-close {
-  -webkit-transform: scale(0.5) rotateX(30deg);
-  transition: all 150ms ease-in;
-}
-
-.header h3 {
-  margin-top: 8px;
-}
-
-select.btn {
-  -webkit-appearance: none;
-  max-width: 115px;
-}
-
-.col-xs-4, .col-xs-8 {
-  z-index: 0;
-}
-
-.btn-file {
-    position: relative;
-    overflow: hidden;
-    margin-right: 10px;
-
-}
-
-.footer {
-  clear: both;
-}
-
-.btn-file input[type=file] {
-  position: absolute;
-  top: 0;
-  right: 0;
-  min-width: 100%;
-  min-height: 100%;
-  font-size: 100px;
-  text-align: right;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  outline: none;
-  background: white;
-  cursor: inherit;
-  display: block;
-}
-
-.btn-primary {
-  background-color: #5badf0;
-  border-color: #4CA1E7;
-}
-
-.btn-primary:hover {
-  background-color: #2389DC;
-  border-color: #2389DC;
-}
-a {
-    color: #5badf0;
-}
-
-a:hover {
-  color: #4CA1E7;
-}
-
-.clearFix {
-  clear: both;
-}
-
-.startNew {
-  margin-left: 10px;
-}
-
-.toolBar {
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
-.chart {
-  margin-bottom: 20px;
-}
-
-.legend {
-  background-color: #fcf8e3;
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-radius: 5px;
-  color: #666;
-}*/

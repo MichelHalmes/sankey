@@ -7,3 +7,9 @@ public/styles.css
 public/fonts/*
 public/build.js
 __old
+
+data/_config_CONFIDENTIAL.py
+
+*.pyc
+
+*.json

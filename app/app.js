@@ -14,44 +14,43 @@ class App extends React.Component {
   constructor() {
     super()
 
+    this.DATA_FILE = '../data/kafkaData.json';
+
     this.state = {
       nodes: [],
-      links: [],
-      split_level_1: null
+      links: []
     };
 
-    this.loadData = loadData.bind(this);
-
-    this.loadLevelData = this.loadLevelData.bind(this);
     this.setSplitLevel1 = this.setSplitLevel1.bind(this);
   }
 
   componentDidMount() {
-    this.loadData('./emptyData.json');
-    this.loadLevelData('./levelData.json');
-  }
-
-  loadLevelData(path) {
     request
-      .get(path)
+      .get(this.DATA_FILE)
       .end((err, res) => {
         if (err) { console.log('Data import error!', err); }
 
-        var {nodes, links} = parseLevelData(res.body.nodes, res.body.links, this.state.split_level_1);
+        this.NODES = res.body.nodes;
+        this.LINKS = res.body.links;
+        var {nodes, links} = parseLevelData(this.NODES, this.LINKS, null);
+
 
         this.setState({nodes, links});
-      });
+    })
+
   }
 
+
   setSplitLevel1(element) {
-    console.log('%O', element);
     if (element.is_split) {
-      this.setState({split_level_1: null});
+      var next_split_level_1 = null;
     } else {
-      this.setState({split_level_1: element.name});
+      var next_split_level_1 = element.name;
     }
 
-    this.loadLevelData('./levelData.json');
+    var {nodes, links} = parseLevelData(this.NODES, this.LINKS, next_split_level_1);
+
+    this.setState({nodes, links});
   }
 
   render() {

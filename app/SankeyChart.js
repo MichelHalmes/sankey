@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactFauxDOM from 'react-faux-dom';
 import d3 from 'd3';
-import sankey from 'd3-plugins-sankey';
+// import sankey from 'd3-plugins-sankey';
+import sankey from './my_sankey';
 import _ from 'lodash';
 
 
@@ -9,28 +10,28 @@ export default class extends React.Component {
   constructor() {
     super()
 
-    this.state = {
-      nodes: [],
-      links: []
-    };
+    // this.state = {
+    //   nodes: [],
+    //   links: []
+    // };
   }
 
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      nodes: nextProps.nodes, // TODO: Why not use props?
-      links: nextProps.links
-    });
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   this.setState({
+  //     nodes: nextProps.nodes, // TODO: Why not use props?
+  //     links: nextProps.links
+  //   });
+  // }
 
 
   render() {
     // ========================================================================
     // Set units, margin, sizes
     // ========================================================================
-    var margin = { top: 10, right: 0, bottom: 10, left: 0 };
-    var width = 1100 - margin.left - margin.right;
-    var height = 700 - margin.top - margin.bottom;
+    var margin = { top: 100, right: 50, bottom: 5, left: 50 };
+    var width = 1600 - margin.left - margin.right;
+    var height = 800 - margin.top - margin.bottom;
 
     var format = (d) => formatNumber(d);
     var formatNumber = d3.format(",.0f"); // zero decimal places
@@ -38,6 +39,7 @@ export default class extends React.Component {
     // ========================================================================
     // Set the sankey diagram properties
     // ========================================================================
+
     var sankey = d3.sankey()
       .size([width, height])
       .nodeWidth(15)
@@ -45,14 +47,15 @@ export default class extends React.Component {
 
     var path = sankey.link();
 
+
     var graph = {
-      nodes: _.cloneDeep(this.state.nodes),
-      links: _.cloneDeep(this.state.links)
+      nodes: _.cloneDeep(this.props.nodes),
+      links: _.cloneDeep(this.props.links)
     };
 
     sankey.nodes(graph.nodes)
-      .links(graph.links)
-      .layout(32);
+          .links(graph.links)
+          .layout(32);
 
     // ========================================================================
     // Initialize and append the svg canvas to faux-DOM
@@ -65,30 +68,45 @@ export default class extends React.Component {
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
     // ========================================================================
     // Add links
     // ========================================================================
-    var link = svg.append("g").selectAll(".link")
-      .data(graph.links)
+    var link = svg.append("g")
+        .selectAll(".link")
+        .data(graph.links)
       .enter().append("path")
-      .attr("class", "link")
-      // .on('click', this.props.openModal) // register eventListener
-      .attr("d", path)
-      .style("stroke-width", (d) => Math.max(1, d.dy))
+        .attr("class", (d) => (d.causesCycle ? "cycleLink" : "link"))
+        .attr("d", path)
+        .style("stroke-width", (d) => Math.max(1, d.dy))
+        .sort(function(a, b) { return b.dy - a.dy; });
 
     // add link titles
     link.append("title")
       .text((d) => d.source.name + " → " + d.target.name + "\n Weight: " + format(d.value));
 
+
     // ========================================================================
     // Add nodes
     // ========================================================================
-    var node = svg.append("g").selectAll(".node")
-      .data(graph.nodes)
+
+    var node = svg.append("g")
+        .selectAll(".node")
+        .data(graph.nodes)
       .enter().append("g")
-      .attr("class", "node")
-      .on('click', this.props.onNodeClick) // register eventListener
-      .attr("transform", (d) => "translate(" + d.x + "," + d.y + ")")
+        .attr("class", "node")
+        .on('click', this.props.onNodeClick) // register eventListener
+        .attr("transform", (d) => "translate(" + d.x + "," + d.y + ")")
+      .call(d3.behavior.drag()
+        .origin((d) => d)
+        .on("dragstart", function() { this.parentNode.appendChild(this); })
+        .on("drag", dragmove));
+
+    function dragmove(d) {
+        d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.sourceEvent.y))) + ")");
+        sankey.relayout();
+        link.attr("d", path);
+      }
 
     // add nodes rect
     node.append("rect")
@@ -139,6 +157,7 @@ export default class extends React.Component {
     // Render the faux-DOM to React elements
     // ========================================================================
     return svgNode.toReact();
+
 
     // JSX rendering return if didn't rely on faux-dom
     // ------------------------------------------------------------------------
