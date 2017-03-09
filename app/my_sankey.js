@@ -200,11 +200,11 @@ d3.sankey = function() {
     var iter_cnt=0, cycleValue = 0, prevCycleValue = 0;
     nodes.forEach((n) => {n.cycleIndex=0; n.degree = 1});
 
-    while (iter_cnt < 20) {
+    while (iter_cnt < 5) {
+      console.log('---', iter_cnt);
       if (iter_cnt == 5) {
         nodes.forEach((n) => {n.cycleIndex=0; n.degree = 1});
       }
-      console.log('++++', iter_cnt);
       var addedLinks = [];
       prevCycleValue = cycleValue;
       cycleValue = 0;
@@ -212,24 +212,42 @@ d3.sankey = function() {
       links.forEach(function(link, i) {
         var cycleLinks = findCycleLinks(link.source, link.target, addedLinks);
         if (cycleLinks.length) {
-          link.source.cycleIndex -= Math.log(link.value);
-          link.target.cycleIndex += Math.log(link.value);
+          link.source.cycleIndex -= 1;
+          link.target.cycleIndex += 1;
         } else {
           addedLinks.push(link);
         }
-        // link.source.degree += Math.log(link.value);
-        // link.target.degree += Math.log(link.value);
+        link.source.degree += 1;
+        link.target.degree += 1;
       });
 
-      links.forEach((link, i) => {
-        link.cycleIndex = (link.source.cycleIndex/link.source.degree - link.target.cycleIndex/link.target.degree);
-      })
+      nodes.sort((a, b) => a.cycleIndex/a.degree - b.cycleIndex/a.degree);
 
-      links.sort((a, b) => a.cycleIndex - b.cycleIndex);
+      var prioritizedLinks =[], prioritizedNodes = [];
+      var remainingLinks = links;
+      nodes.forEach(function(newNode) {
+        prioritizedNodes.push(newNode);
+        var linksOfNewNode = [];
+        remainingLinks = remainingLinks.filter(function(link) {
+          if (prioritizedNodes.indexOf(link.source)!=-1 && prioritizedNodes.indexOf(link.target)!=-1) {
+            linksOfNewNode.push(link);
+            return false;
+          } else {
+            return true;
+          }
+        });
+
+        linksOfNewNode.sort((a, b) => b.value-a.value);
+        prioritizedLinks = prioritizedLinks.concat(linksOfNewNode);
+      });
+
+      links = prioritizedLinks;
+
       iter_cnt++;
-      console.log(links.map((l)=> l.source.name + "->" + l.target.name + "="+ l.cycleIndex));
     }
   }
+  // console.log(nodes.map((n)=> n.name + "="+ n.cycleIndex/n.degree))
+  // console.log(linksOfNewNode.map((l)=> l.source.name + "->" + l.target.name + "="+ l.cycleIndex));
 
   /* Cycle Related computations */
   function markCycles() {
