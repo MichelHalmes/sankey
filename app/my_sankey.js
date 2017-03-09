@@ -156,6 +156,7 @@ d3.sankey = function() {
   sankey.layout = function(iterations) {
     computeNodeLinks();
     computeNodeValues();
+    reorderLinks();
     markCycles();
     computeNodeBreadths();
     computeNodeDepths(iterations);
@@ -195,14 +196,49 @@ d3.sankey = function() {
     });
   }
 
+  function reorderLinks() {
+    var iter_cnt=0, cycleValue = 0, prevCycleValue = 0;
+    nodes.forEach((n) => {n.cycleIndex=0; n.degree = 1});
+
+    while (iter_cnt < 20) {
+      if (iter_cnt == 5) {
+        nodes.forEach((n) => {n.cycleIndex=0; n.degree = 1});
+      }
+      console.log('++++', iter_cnt);
+      var addedLinks = [];
+      prevCycleValue = cycleValue;
+      cycleValue = 0;
+
+      links.forEach(function(link, i) {
+        var cycleLinks = findCycleLinks(link.source, link.target, addedLinks);
+        if (cycleLinks.length) {
+          link.source.cycleIndex -= Math.log(link.value);
+          link.target.cycleIndex += Math.log(link.value);
+        } else {
+          addedLinks.push(link);
+        }
+        // link.source.degree += Math.log(link.value);
+        // link.target.degree += Math.log(link.value);
+      });
+
+      links.forEach((link, i) => {
+        link.cycleIndex = (link.source.cycleIndex/link.source.degree - link.target.cycleIndex/link.target.degree);
+      })
+
+      links.sort((a, b) => a.cycleIndex - b.cycleIndex);
+      iter_cnt++;
+      console.log(links.map((l)=> l.source.name + "->" + l.target.name + "="+ l.cycleIndex));
+    }
+  }
+
   /* Cycle Related computations */
   function markCycles() {
     // ideally, find the 'feedback arc set' and remove them.
     // This way is expensive, but should be fine for small numbers of links
     var cycleMakers = [];
-    var addedLinks = new Array();
+    var addedLinks = [];
     links.forEach(function(link) {
-      if( createsCycle( link.source, link.target, addedLinks ) ) {
+      if( findCycleLinks( link.source, link.target, addedLinks ).length ) {
         link.causesCycle=true;
         link.cycleIndex = cycleMakers.length;
         cycleMakers.push( link );
@@ -213,33 +249,24 @@ d3.sankey = function() {
   };
 
 
-  function createsCycle( originalSource, nodeToCheck, graph ) {
-    if( graph.length == 0 ) {
-      return false;
-    }
-
+  function findCycleLinks(originalSource, nodeToCheck, graph ) {
     var nextLinks = findLinksOutward( nodeToCheck, graph );
-    // leaf node check
-    if( nextLinks.length == 0 ) {
-      return false;
-    }
-
     // cycle check
-    for( var i = 0; i < nextLinks.length; i++ ) {
-      var nextLink = nextLinks[i];
-
+    for( var nextLink of nextLinks) {
       if( nextLink.target === originalSource ) {
-        return true;
+        return [nextLink];
       }
 
       // Recurse
-      if( createsCycle( originalSource, nextLink.target, graph ) ) {
-        return true;
+      var cycle_links = findCycleLinks( originalSource, nextLink.target, graph )
+      if (cycle_links.length) {
+        cycle_links.push(nextLink);
+        return cycle_links;
       }
     }
 
     // Exhausted all links
-    return false;
+    return [];
   };
 
   /* Given a node, find all links for which this is a source
