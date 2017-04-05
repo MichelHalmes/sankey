@@ -74,7 +74,7 @@ function parseLevelLinks(level_links, node_map, split_level_1) {
     }
   });
 
-  level_links = level_links.filter((link) => !link.delete && link.value > MIN_LINK_VALUE && link.source != link.target)
+  level_links = level_links.filter((link) => !link.delete  && link.source != link.target)
     .sort(function (a, b) {
       return a.source - b.source || a.target - b.target;
   });

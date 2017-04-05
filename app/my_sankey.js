@@ -199,11 +199,19 @@ d3.sankey = function() {
   function reorderLinks() {
     var iter_cnt=0, cycleValue = 0, prevCycleValue = 0;
     nodes.forEach((n) => {n.cycleIndex=0; n.degree = 1});
+    function shuffle(a) {
+      for (let i = a.length; i; i--) {
+          let j = Math.floor(Math.random() * i);
+          [a[i - 1], a[j]] = [a[j], a[i - 1]];
+      }
+  }
 
-    while (iter_cnt < 5) {
-      console.log('---', iter_cnt);
+    while (iter_cnt < 10) {
       if (iter_cnt == 5) {
         nodes.forEach((n) => {n.cycleIndex=0; n.degree = 1});
+      }
+      if (iter_cnt <3) {
+        shuffle(links);
       }
       var addedLinks = [];
       prevCycleValue = cycleValue;
@@ -222,6 +230,7 @@ d3.sankey = function() {
       });
 
       nodes.sort((a, b) => a.cycleIndex/a.degree - b.cycleIndex/a.degree);
+      // console.log(nodes.map((n)=> n.name + "="+ n.cycleIndex/n.degree))
 
       var prioritizedLinks =[], prioritizedNodes = [];
       var remainingLinks = links;

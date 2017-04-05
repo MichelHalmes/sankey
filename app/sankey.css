@@ -13,7 +13,7 @@ body {
 
 .node {
   fill-opacity: .7;
-  color:yellow !important;
+
 }
 
 .node rect {
@@ -31,9 +31,10 @@ body {
 }
 
 .node text {
-  fill: #444;
+  fill: #fa0;
   stroke: none;
   font-size: .8em;
+  font-weight:bold;
 }
 
 .link {
@@ -43,7 +44,7 @@ body {
 }
 
 .cycleLink {
-  fill: #633;
+  fill: #533;
   opacity: .2;
   stroke: none;
   stroke-linejoin: "round";
