@@ -31,9 +31,9 @@ body {
 }
 
 .node text {
-  fill: #fa0;
+  fill: #00c;
   stroke: none;
-  font-size: .8em;
+  font-size: 1.2em;
   font-weight:bold;
 }
 

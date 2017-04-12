@@ -11,6 +11,11 @@ module.exports = {
     filename: 'build.js'
   },
 
+  devServer: {
+    host: '0.0.0.0',
+    port: 9999
+  },
+
   module: {
     loaders: [
       {test: /\.js$/, exclude: [node_modules_dir], loader: "babel", query: {presets:['react', 'es2015']}},
@@ -21,8 +26,8 @@ module.exports = {
 
   plugins: [
     new ExtractTextPlugin("styles.css"),
-    // new webpack.optimize.UglifyJsPlugin(),
-    // new webpack.optimize.DedupePlugin(),
-    // new webpack.optimize.OccurenceOrderPlugin()
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurenceOrderPlugin()
   ]
 };

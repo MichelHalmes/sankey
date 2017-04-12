@@ -41,13 +41,13 @@ function parseLevelNodes(level_nodes, split_level_1) {
   level_nodes.forEach(function(node) {
     if(node.level_1 == split_level_1) {
       node_count++;
-      node_map.set(node.level_0, {node: node_count, name: node.level_0, is_split: true});
+      node_map.set(node.level_0, {node: node_count, name: node.level_0, source_value: 0, target_value: 0, is_split: true});
     } else {
       if (node.level_1 != prev_level_1) {
         node_count++;
         prev_level_1 = node.level_1;
       }
-      node_map.set(node.level_0, {node: node_count, name: node.level_1});
+      node_map.set(node.level_0, {node: node_count, name: node.level_1, source_value: 0, target_value: 0});
     }
   });
 
@@ -68,16 +68,21 @@ function parseLevelLinks(level_links, node_map, split_level_1) {
     }
 
     if (!split_level_1 || source.is_split || target.is_split) {
-      return {source: source.node, target: target.node, value : link.value}
+      source.source_value+= link.value;
+      target.target_value+= link.value;
+      return {source: source, target: target, value : link.value}
     } else {
       return {delete: true}; // Will be filtered
     }
   });
 
-  level_links = level_links.filter((link) => !link.delete  && link.source != link.target)
-    .sort(function (a, b) {
-      return a.source - b.source || a.target - b.target;
-  });
+  level_links = level_links.filter((link) => (
+    !link.delete  && link.source.node != link.target.node
+    && link.value > 100
+    && (link.value > 0.1*link.source.source_value || link.value > 0.1*link.target.target_value))
+  )
+  .map((link) => ({source: link.source.node, target: link.target.node, value: link.value}) )
+  .sort((a, b) =>  a.source - b.source || a.target - b.target);
 
 
   var links = level_links.reduce(function (acc, curr, idx) {
