@@ -26,10 +26,13 @@ function parseLevelData(level_nodes, level_links, split_level_1){
   var links = parseLevelLinks(level_links, node_map, split_level_1);
 
   var nodes = Array.from(node_map.values())
-    .filter((node, index, self) => index === self.findIndex((t) => (
-      t.node_id === node.node_id && t.name === node.name
-      ))
-    );
+    .filter((node) => node.source_value>MIN_LINK_VALUE || node.target_value>MIN_LINK_VALUE)
+
+
+    // .filter((node, index, self) => index === self.findIndex((t) => (
+    //   t.node_id === node.node_id && t.name === node.name
+    //   ))
+    // );
 
   return {nodes, links}
 }
@@ -79,7 +82,7 @@ function parseLevelLinks(level_links, node_map, split_level_1) {
 
   level_links = level_links.filter((link) => (
     !link.delete  && link.source.node_id != link.target.node_id
-    && link.value > 1000
+    && link.value > MIN_LINK_VALUE
     && (link.value > 0.2*link.source.source_value || link.value > 0.2*link.target.target_value))
   )
   .map((link) => ({source: link.source.node_id, target: link.target.node_id, value: link.value}) )

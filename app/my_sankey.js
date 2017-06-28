@@ -178,9 +178,10 @@ d3.sankey = function() {
     });
     links.forEach(function(link) {
       var source = link.source,
-      target = link.target;
-      if (typeof source === "number") source = link.source = nodes[link.source];
-      if (typeof target === "number") target = link.target = nodes[link.target];
+          target = link.target;
+      console.log(source, target)
+      if (typeof source === "number") source = link.source = nodes.find((n) => n.node_id === link.source);
+      if (typeof target === "number") target = link.target = nodes.find((n) => n.node_id === link.target);
       source.sourceLinks.push(link);
       target.targetLinks.push(link);
     });
