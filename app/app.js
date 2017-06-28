@@ -5,6 +5,7 @@ import request from 'superagent';
 import {loadData, parseLevelData} from './utils.js'
 
 import SankeyChart from './SankeyChart';
+import Slider from '../d3_drag_drop/slider';
 
 import bootstrap from 'bootstrap/dist/css/bootstrap.css';
 import style from './sankey.css';
@@ -14,7 +15,7 @@ class App extends React.Component {
   constructor() {
     super()
 
-    this.DATA_FILE = '../data/kafkaData.json';
+    this.DATA_FILE = '../data/redshiftData.json';
 
     this.state = {
       nodes: [],
@@ -56,11 +57,13 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <SankeyChart nodes={this.state.nodes} links={this.state.links} onNodeClick={this.setSplitLevel1}/>
+        <SankeyChart nodes={this.state.nodes} links={this.state.links} onNodeClick={this.setSplitLevel1} />  
       </div>
     );
   }
 };
+
+// <Slider width={20} height={10} value={2} />
 
 
 

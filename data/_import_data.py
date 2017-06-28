@@ -5,45 +5,72 @@ import pickle
 from tabulate import tabulate
 from datetime import timedelta
 import json
+import re
 
 from _config_CONFIDENTIAL import connect_kwargs, query
 
 
-
-with psycopg2.connect(**connect_kwargs) as con:
-    with con.cursor() as cur:
-        cur.execute(query)
-        df = pd.DataFrame(cur.fetchall())
-        df.columns = [desc[0] for desc in cur.description]
-
+print 'Start'
+# with psycopg2.connect(**connect_kwargs) as con:
+#     with con.cursor() as cur:
+#         cur.execute(query)
+#         df = pd.DataFrame(cur.fetchall())
+#         df.columns = [desc[0] for desc in cur.description]
+#
 # pickle.dump(df, open( "save.p", "wb" ) )
 # df = pickle.load(open( "save.p", "rb" ) )
 
+df = pd.read_csv('query.csv')
+df.rename(columns={'client': 'client_id'}, inplace=True)
+# print tabulate(df, headers='keys', tablefmt='psql')
+print 'Got data'
+
+CLEAN_RE = re.compile(r'^([a-z_]+\.?)+$')
+
+print 'Removing...'
+# REMOVE EVENTS
+df = df[df.action.map(lambda a: not not CLEAN_RE.match(a) and \
+                                a not in ['click_through'])]
+df.context = df.context.map(lambda c: str(c).split('.', 1)[0])
+
+df = df[df.context.map(lambda c: not not CLEAN_RE.match(c) and \
+                                 not c.endswith('VC') and \
+                                 not c.endswith('Controller') and \
+                                 c not in ['generic', 'nan', 'unknown'])]
+
+
+print 'Sorting...'
 # SORT
 df = df.sort_values(by=['client_id', 'datetime'])
 
+print 'Joining...'
 # JOIN ON PREVIOUS EVENT
 def join_prev(group):
     group.sort_values(by='datetime')
+    # JOIN ON PREVIOUS
     group['prev_datetime'] = group.datetime.shift(1)
-    group['prev_type'] = group.type.shift(1)
+    group['prev_context'] = group.context.shift(1)
 
-    group['prev_type'].iloc[0] = 'session_start:whatever'
+    # EDIT FIRST AND LAST EVENT
+    group['prev_context'].iloc[0] = 'session_start'
     group['prev_datetime'].iloc[0] = group['datetime'].iloc[0]
-    exit_event = {'type': 'end_session:whatever', 'prev_type': group['type'].iloc[-1],
+    exit_event = {'context': 'end_session', 'prev_context': group['context'].iloc[-1],
         'datetime': group['datetime'].iloc[-1], 'prev_datetime': group['datetime'].iloc[-1] }
     exit_df = pd.DataFrame(exit_event, index=[0])
     group = group.append(exit_df)
+
+
     return group
 
 df = df.groupby(df.client_id).apply(join_prev)
 
-# FILTER NULL AND INACTIVE SESSIONS
-# MAX_INACTIVITY_TIME = timedelta(seconds = 60*15)
-# df = df[(df.prev_type.notnull()) & (df.datetime - df.prev_datetime < MAX_INACTIVITY_TIME) ]
+# print tabulate(df[['client_id',  'datetime', 'context', 'action']], headers='keys', tablefmt='psql')
+print 'Filtering'
+df = df[df.context!=df.prev_context]
+
 
 # KEEP ONLY CUSTOMER-FLOW COLUMNS
-df = df[['prev_type', 'type']].applymap(lambda t: t.split(':')[0])
+df = df[['prev_context', 'context']]
 df.columns = ['source_0', 'target_0']
 
 
@@ -52,7 +79,6 @@ result_df = df.groupby(['source_0', 'target_0']).size().reset_index(name='value'
 links = result_df.to_dict(orient='records')
 
 print tabulate(result_df, headers='keys', tablefmt='psql')
-
 
 # FIND ALL LEVEL_0 STATES
 df  = pd.DataFrame(pd.concat([result_df.source_0, result_df.target_0]), columns=['level_0'])

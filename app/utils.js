@@ -23,12 +23,12 @@ function loadData(path) {
 function parseLevelData(level_nodes, level_links, split_level_1){
   var node_map = parseLevelNodes(level_nodes, split_level_1);
 
+  var links = parseLevelLinks(level_links, node_map, split_level_1);
+
   var nodes = Array.from(node_map.values())
     .filter((thing, index, self) => index === self.findIndex((t) => {
       return t.node === thing.node && t.name === thing.name; })
     );
-
-  var links = parseLevelLinks(level_links, node_map, split_level_1);
 
   return {nodes, links}
 }
@@ -78,8 +78,8 @@ function parseLevelLinks(level_links, node_map, split_level_1) {
 
   level_links = level_links.filter((link) => (
     !link.delete  && link.source.node != link.target.node
-    && link.value > 100
-    && (link.value > 0.1*link.source.source_value || link.value > 0.1*link.target.target_value))
+    && link.value > 1000
+    && (link.value > 0.2*link.source.source_value || link.value > 0.2*link.target.target_value))
   )
   .map((link) => ({source: link.source.node, target: link.target.node, value: link.value}) )
   .sort((a, b) =>  a.source - b.source || a.target - b.target);

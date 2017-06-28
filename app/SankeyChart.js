@@ -97,22 +97,23 @@ export default class extends React.Component {
         .data(graph.nodes)
       .enter().append("g")
         .attr("class", "node")
-         .on('click', this.props.onNodeClick) // register eventListener
+        .on('click', this.props.onNodeClick) // register eventListener
         .attr("transform", (d) => "translate(" + d.x + "," + d.y + ")")
-      .call(d3.behavior.drag()
-        .origin((d) => d)
-        .on("dragstart", function() { this.parentNode.appendChild(this); })
-        .on("drag", dragmove));
+      // .call(d3.behavior.drag()
+      //   .origin(function(d) { return d; })
+      //   .on("dragstart", function() { this.parentNode.appendChild(this); })
+      //   .on("drag", dragmove));
 
     function dragmove(d) {
-        // d3.select(React.findDOMNode(this)).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.sourceEvent.y))) + ")");
-        d3.select(this)
-          .attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.sourceEvent.y))) + ")")
-          .style('fill', 'red');
+      console.log(d.dx, d.dy, d.x, d.y);
+      // d3.select(React.findDOMNode(this)).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.sourceEvent.y))) + ")");
+      d3.select(this)
+        .attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.sourceEvent.y))) + ")")
+        .style('fill', 'red');
 
-        sankey.relayout();
-        link.attr("d", path);
-      }
+      sankey.relayout();
+      link.attr("d", path);
+    }
 
     // add nodes rect
     node.append("rect")
