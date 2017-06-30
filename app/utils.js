@@ -83,8 +83,8 @@ function parseLevelLinks(level_links, node_map, split_level_1) {
   level_links = level_links.filter((link) => (
     !link.delete  && link.source.node_id != link.target.node_id
     && link.value > MIN_LINK_VALUE
-    && (link.value > 0.2*link.source.source_value || link.value > 0.2*link.target.target_value))
-  )
+    && (link.value > 0.2*link.source.source_value || link.value > 0.2*link.target.target_value)
+  ))
   .map((link) => ({source: link.source.node_id, target: link.target.node_id, value: link.value}) )
   .sort((a, b) =>  a.source - b.source || a.target - b.target);
 

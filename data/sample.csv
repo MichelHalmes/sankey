@@ -1,0 +1,12 @@
+client,datetime,action,context
+A,2017-05-20 03:55:00.0,impression,a1
+A,2017-05-20 03:55:01.0,impression,a2
+A,2017-05-20 03:55:15.0,impression,aa1
+A,2017-05-20 03:55:17.0,impression,aa2
+B,2017-05-20 03:55:00.0,impression,b1
+B,2017-05-20 03:55:01.0,impression,b2
+B,2017-05-20 03:55:15.0,impression,bb1
+C,2017-05-20 03:55:00.0,impression,c1
+C,2017-05-20 03:55:01.0,impression,c2
+C,2017-05-20 03:55:15.0,impression,cc1
+C,2017-05-20 03:55:16.0,impression,cc2
